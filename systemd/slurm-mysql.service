@@ -1,0 +1,45 @@
+[Unit]
+Description=Podman slurm-mysql.service
+Wants=network.target
+After=network-online.target
+
+Wants=slurm-create-datadir.service
+After=slurm-create-datadir.service
+
+[Service]
+Environment=PODMAN_SYSTEMD_UNIT=%n
+Restart=on-failure
+StateDirectory=slurm-container-cluster
+StateDirectoryMode=0700
+ExecStartPre=/bin/mkdir -p %S/slurm-container-cluster/var_run_mysqld
+ExecStartPre=/usr/bin/podman unshare chown 999:999 %S/slurm-container-cluster/var_run_mysqld
+ExecStartPre=/usr/bin/podman unshare chmod 777 %S/slurm-container-cluster/var_run_mysqld
+
+ExecStartPre=/bin/rm -f %t/slurm-mysql.pid %t/slurm-mysql.ctr-id
+
+ExecStart=/usr/bin/podman run --cgroups=no-conmon \
+                              --cidfile %t/slurm-mysql.ctr-id \
+                              --conmon-pidfile %t/slurm-mysql.pid \
+                              --detach \
+                              --name mysql \
+                              --replace \
+                              --volume=%S/slurm-container-cluster/var_run_mysqld:/var/run/mysqld:z \
+                              --volume=%S/slurm-container-cluster/var_lib_mysql:/var/lib/mysql:Z \
+                              -e MYSQL_DATABASE=slurm_acct_db \
+                              -e MYSQL_PASSWORD=password \
+                              -e MYSQL_RANDOM_ROOT_PASSWORD=yes \
+                              -e MYSQL_USER=slurm \
+			      localhost/mysql-with-norouter
+
+ExecStop=/usr/bin/podman stop --cidfile %t/slurm-mysql.ctr-id \
+                               --ignore \
+			       --time 10
+ExecStopPost=/usr/bin/podman rm --cidfile %t/slurm-mysql.ctr-id \
+                                --force \
+				--ignore
+PIDFile=%t/slurm-mysql.pid
+KillMode=none
+Type=forking
+
+[Install]
+WantedBy=multi-user.target default.target

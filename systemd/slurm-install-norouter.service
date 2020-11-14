@@ -1,0 +1,21 @@
+[Unit]
+
+Description=Install norouter
+Wants=network.target
+After=network-online.target
+Wants=slurm-create-datadir.service
+After=slurm-create-datadir.service
+ConditionFileIsExecutable=!%S/slurm-container-cluster/install-norouter/norouter
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+Environment=PODMAN_SYSTEMD_UNIT=%n
+StateDirectory=install-norouter
+StateDirectoryMode=0700
+ExecStart=/usr/bin/curl --create-dirs -o %S/slurm-container-cluster/install-norouter/norouter --fail -L https://github.com/norouter/norouter/releases/latest/download/norouter-Linux-x86_64
+ExecStart=chmod 755 %S/slurm-container-cluster/install-norouter/norouter
+KillMode=none
+
+[Install]
+WantedBy=multi-user.target

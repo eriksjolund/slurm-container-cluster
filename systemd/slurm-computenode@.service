@@ -1,0 +1,67 @@
+[Unit]
+Description=Podman slurm-slurmd.service
+Wants=network.target
+After=network-online.target
+
+Wants=slurm-create-datadir.service
+After=slurm-create-datadir.service
+
+# AssertFileNotEmpty=%S/slurm-container-cluster/etc_munge/munge.key (other subuid UID)
+AssertFileNotEmpty=%S/slurm-container-cluster/etc_slurm/slurm.conf
+AssertFileNotEmpty=%S/slurm-container-cluster/etc_slurm/slurmdbd.conf
+
+[Service]
+Environment=PODMAN_SYSTEMD_UNIT=%n
+#Restart=on-failure
+Restart=no
+
+StateDirectory=slurm-container-cluster
+StateDirectoryMode=0700
+ExecStartPre=rm -f %t/slurm-slurmd%i.pid %t/slurm-slurmd%i.ctr-id
+ExecStartPre=mkdir -p %S/slurm-container-cluster/computenode/%i/var_log_slurm
+ExecStartPre=/usr/bin/podman unshare chmod 700 %S/slurm-container-cluster/computenode/%i/var_log_slurm
+ExecStartPre=/usr/bin/podman unshare chown 0:0 %S/slurm-container-cluster/computenode/%i/var_log_slurm
+ExecStartPre=/usr/bin/podman unshare rm -rf %S/slurm-container-cluster/computenode/%i/var_log_munge
+ExecStartPre=mkdir -p %S/slurm-container-cluster/computenode/%i/var_log_munge
+ExecStartPre=/usr/bin/podman unshare chmod 755 %S/slurm-container-cluster/computenode/%i/var_log_munge
+ExecStartPre=/usr/bin/podman unshare chown 999:997 %S/slurm-container-cluster/computenode/%i/var_log_munge
+#ExecStartPre=/usr/bin/podman unshare chown 0:0 %S/slurm-container-cluster/computenode/%i/var_log_munge
+ExecStart=/usr/bin/podman run --add-host c1:127.0.30.1 \
+                              --add-host c2:127.0.30.2 \
+                              --add-host c3:127.0.30.3 \
+                              --add-host c4:127.0.30.4 \
+                              --add-host c5:127.0.30.5 \
+                              --add-host c6:127.0.30.6 \
+                              --add-host c7:127.0.30.7 \
+                              --add-host c8:127.0.30.8 \
+                              --add-host c9:127.0.30.9 \
+                              --add-host slurmctld:127.0.29.3 \
+                              --add-host slurmdbd:127.0.29.2 \
+                              --cgroups=no-conmon \
+                              --cidfile %t/slurm-slurmd%i.ctr-id \
+                              --conmon-pidfile %t/slurm-slurmd%i.pid \
+                              --detach \
+                              --hostname c%i \
+                              --name c%i \
+                              --privileged=true \
+                              --replace \
+                              --security-opt label=disable \
+                              --volume=%S/slurm-container-cluster/computenode/%i/var_log_slurm:/var/log/slurm:Z \
+                              --volume=%S/slurm-container-cluster/computenode/%i/var_log_munge:/var/log/munge:z \
+                              --volume=%S/slurm-container-cluster/etc_munge:/etc/munge:z \
+                              --volume=%S/slurm-container-cluster/etc_slurm:/etc/slurm:z \
+                              --volume=%S/slurm-container-cluster/adjusting_ports_for_norouter/slurmd:/etc/slurm/adjusting_ports_for_norouter:z \
+                              --volume=%S/slurm-container-cluster/slurm_jobdir:/data:slave \
+                               localhost/slurm-with-norouter slurmd
+ExecStop=/usr/bin/podman stop --cidfile %t/slurm-slurmd%i.ctr-id \
+                              --ignore \
+                              --time 10
+ExecStopPost=/usr/bin/podman rm --cidfile %t/slurm-slurmd%i.ctr-id \
+                                --force \
+                                --ignore
+PIDFile=%t/slurm-slurmd%i.pid
+KillMode=none
+Type=forking
+
+[Install]
+WantedBy=multi-user.target default.target
