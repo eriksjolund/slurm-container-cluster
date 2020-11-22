@@ -5,7 +5,7 @@ Run a Slurm cluster in containers as a non-root user on multiple hosts, by makin
 * [podman](https://github.com/containers/podman/) for running containers. (Replacing `podman` with `docker` might also work but it is untested)
 * [norouter](https://github.com/norouter/norouter) for communication
 * [sshocker](https://github.com/AkihiroSuda/sshocker/) for sharing a local folder to the remote computers (reverse sshfs)
-* [slurm-docker-cluster](https://github.com/giovtorres/slurm-docker-cluster) that provides the base image for the [Dockerfile](./container/slurm-docker-cluster-with-norouter/Dockerfile) that is used to build the container image _localhost/slurm_. The __slurm-container-cluster__ project reuses the basic architecture of the __slurm-docker-cluster__ project but introduces multi-host functionality with the help of __norouter__ and __sshocker__. Another difference is that __slurm-container-cluster__ uses __Systemd__ instead of __Docker Compose__.
+* [slurm-docker-cluster](https://github.com/giovtorres/slurm-docker-cluster). The __slurm-container-cluster__ project reuses the basic architecture of the __slurm-docker-cluster__ project but introduces multi-host functionality with the help of __norouter__ and __sshocker__. Another difference is that __slurm-container-cluster__ uses __Systemd__ instead of __Docker Compose__.
 
 Each Slurm software component `slurmd`, `slurmdbd`, `slurmctld` and  `mysql` runs in a separate container.
 Multiple `slurmd` containers may be used. The `slurmd` containers act as "compute nodes" in Slurm so it makes sense to have a number of them. If you have ssh access to remote computers, you may run the slurmd compute node containers there too. See also the section [_Boot Fedora CoreOS in live mode from a USB stick_](#boot-fedora-coreos-in-live-mode-from-a-usb-stick)) on how to boot up a computer in live mode to let it become a remote ssh-accessible computer.
@@ -319,11 +319,7 @@ Here is an example of how to to run a container with podman. The container _dock
 ```
 user@laptop:~$ podman exec -it slurmctld bash -c "cd /data/sshocker_shared && cat podman-example.sh"
 #!/bin/sh
-
-echo -n "hostname : "
 podman run --user 0 --cgroups disabled --runtime crun --volume /data:/data:rw --events-backend=file --rm docker.io/library/alpine cat /etc/os-release
-
-sleep 3
 
 user@laptop:~$ podman exec -it slurmctld bash -c "cd /data/sshocker_shared && sbatch ./podman-example"
 Submitted batch job 32
