@@ -1,47 +1,23 @@
 hosts:
-  host0:
-    vip: "127.0.29.0"
+  local:
+    vip: "127.0.29.100"
   slurmdbd:
     cmd: ["podman", "exec", "-i", "slurmdbd", "norouter"]
     vip: "127.0.29.2"
     ports: ["6819:127.0.0.1:7819"]
-  slurmctld:
+    writeEtcHosts: true
+  slurmctld-norouter:
     cmd: ["podman", "exec", "-i", "slurmctld", "norouter"]
     vip: "127.0.29.3"
     ports: ["6817:127.0.0.1:7817"]
+    writeEtcHosts: true
   c1:
     cmd: ["podman", "exec", "-i", "c1", "norouter"]
     vip: "127.0.30.1"
     ports: ["6818:127.0.0.1:7818"]
+    writeEtcHosts: true
   c2:
-    cmd: ["ssh", "remoteuser@192.0.2.10", "--", "podman", "exec", "-i", "c2", "norouter"]
+    cmd: ["ssh", "core@192.168.122.253", "--", "podman", "exec", "-i", "c2", "norouter"]
     vip: "127.0.30.2"
     ports: ["6818:127.0.0.1:7818"]
-# c3:
-#   cmd: ["ssh", "ADJUST THIS VALUE username@host", "--", "podman", "exec", "-i", "c3", "norouter"]
-#   vip: "127.0.30.3"
-#   ports: ["6818:127.0.0.1:7818"]
-# c4:
-#   cmd: ["ssh", "ADJUST THIS VALUE username@host", "--", "podman", "exec", "-i", "c4", "norouter"]
-#   vip: "127.0.30.4"
-#   ports: ["6818:127.0.0.1:7818"]
-# c5:
-#   cmd: ["ssh", "ADJUST THIS VALUE username@host", "--", "podman", "exec", "-i", "c5", "norouter"]
-#   vip: "127.0.30.5"
-#   ports: ["6818:127.0.0.1:7818"]
-# c6:
-#   cmd: ["ssh", "ADJUST THIS VALUE username@host", "--", "podman", "exec", "-i", "c6", "norouter"]
-#   vip: "127.0.30.6"
-#   ports: ["6818:127.0.0.1:7818"]
-# c7:
-#   cmd: ["ssh", "ADJUST THIS VALUE username@host", "--", "podman", "exec", "-i", "c7", "norouter"]
-#   vip: "127.0.30.7"
-#   ports: ["6818:127.0.0.1:7818"]
-# c8:
-#   cmd: ["ssh", "ADJUST THIS VALUE username@host", "--", "podman", "exec", "-i", "c8", "norouter"]
-#   vip: "127.0.30.8"
-#   ports: ["6818:127.0.0.1:7818"]
-# c9:
-#   cmd: ["ssh", "ADJUST THIS VALUE username@host", "--", "podman", "exec", "-i", "c9", "norouter"]
-#   vip: "127.0.30.9"
-#   ports: ["6818:127.0.0.1:7818"]
+    writeEtcHosts: true

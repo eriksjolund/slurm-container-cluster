@@ -64,7 +64,24 @@ done
 cat "$1/slurm-with-norouter.tar" | ssh $2 podman load localhost/slurm-with-norouter
 cat "$1/mysql-with-norouter.tar" | ssh $2 podman load localhost/mysql-with-norouter
 
-cat "$1/etc_munge/munge.key" | ssh $2 podman unshare sh -c '"mkdir -p ~/.config/slurm-container-cluster/etc_munge && cd ~/.config/slurm-container-cluster/etc_munge/ && cat - > munge.key && chmod 700 munge.key && chown -R 999:997 ~/.config/slurm-container-cluster/etc_munge"'
+cat "$1/etc_munge/munge.key" | ssh $2 podman unshare sh -c '"mkdir -p ~/.config/slurm-container-cluster/etc_munge && cd ~/.config/slurm-container-cluster/etc_munge/ && cat - > munge.key && chmod 700 munge.key && chown -R 993:992 ~/.config/slurm-container-cluster/etc_munge"'
 
 ssh $2 mkdir -p .config/slurm-container-cluster/etc_slurm
 rsync -e ssh -r "$1/etc_slurm/" $2:.config/slurm-container-cluster/etc_slurm
+
+ssh $2 podman unshare sh -c '"podman unshare chown 997:997 ~/.config/slurm-container-cluster/etc_slurm/slurmdbd.conf && podman unshare chmod 600 ~/.config/slurm-container-cluster/etc_slurm/slurmdbd.conf"'
+
+# Create a read-only shared image storage for all container images that
+# were added with add-extra-containerimage.sh
+store=.config/slurm-container-cluster/extra-containerimages
+ssh $2 mkdir -p "$store"
+shopt -s nullglob
+for i in $1/extra_containerimages/tmp*; do
+  name=$(cat $i/name)
+  if [ -z "$name" ]; then
+    echo $i/name is empty
+    exit 1
+  fi
+  cat "$i/image.tar" | ssh $2 podman run -i  --ulimit host --privileged --volume "$store":/store --volume /dev/fuse:/dev/fuse:rw localhost/slurm-with-norouter podman --root /store load $name
+done
+shopt -u nullglob

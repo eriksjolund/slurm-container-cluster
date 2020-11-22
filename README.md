@@ -62,9 +62,12 @@ $ cd slurm-container-cluster
 3. Build the container images
 
 ```
+podman build -t slurm-container-cluster .
 podman build -t mysql-with-norouter container/mysql-with-norouter/
-podman build -t slurm-with-norouter container/slurm-with-norouter/
+podman image tag localhost/slurm-container-cluster localhost/slurm-with-norouter
 ```
+
+(the identifier _localhost/slurm-with-norouter_ is used in the systemd service files)
 
 4. 
 
@@ -86,6 +89,18 @@ installation_files_dir=/tmp/tmp.WKve6PeZgi
 ```
 
 (The variable is just used to simplify the instructions in this README.md)
+
+
+6.
+
+
+Add extra container images to the installation files. These container images can be run by podman
+in your sbatch scripts.
+
+```
+podman pull docker.io/library/alpine:3.12.1
+bash add-extra-containerimage.sh $installation_files_dir docker.io/library/alpine:3.12.1
+```
 
 ### Adjust SLURM configuration
 
@@ -216,7 +231,7 @@ with this content
 ```
 #!/bin/sh
 
-echo -n "hostname : " 
+echo -n "hostname : "
 hostname
 sleep 10
 ```
@@ -242,7 +257,7 @@ user@laptop:~$ podman exec -it slurmctld bash -c "cd /data/sshocker_shared && ls
 user@laptop:~$ podman exec -it slurmctld bash -c "cd /data/sshocker_shared && cat test.sh"
 #!/bin/sh
 
-echo -n "hostname : " 
+echo -n "hostname : "
 hostname
 sleep 10
 
@@ -297,6 +312,33 @@ hostname : c1
 hostname : c2
 hostname : c1
 user@laptop:~$
+```
+
+Here is an example of how to to run a container with podman. The container _docker.io/library/alpine:3.12.1_ was previously added to the installation files with the script  _add-extra-containerimage.sh_)
+
+```
+user@laptop:~$ podman exec -it slurmctld bash -c "cd /data/sshocker_shared && cat podman-example.sh"
+#!/bin/sh
+
+echo -n "hostname : "
+podman run --user 0 --cgroups disabled --runtime crun --volume /data:/data:rw --events-backend=file --rm docker.io/library/alpine cat /etc/os-release
+
+sleep 3
+
+user@laptop:~$ podman exec -it slurmctld bash -c "cd /data/sshocker_shared && sbatch ./podman-example"
+Submitted batch job 32
+```
+
+When the job has finished, run
+
+```
+user@laptop:~$ ls -l ~/.config/slurm-container-cluster/slurm_jobdir/sshocker_shared/slurm-32.out
+NAME="Alpine Linux"
+ID=alpine
+VERSION_ID=3.12.1
+PRETTY_NAME="Alpine Linux v3.12"
+HOME_URL="https://alpinelinux.org/"
+BUG_REPORT_URL="https://bugs.alpinelinux.org/"
 ```
 
 ### Inspecting log files to debug errors

@@ -22,21 +22,10 @@ Restart=on-failure
 StateDirectory=slurm-container-cluster
 StateDirectoryMode=0700
 ExecStartPre=/bin/rm -f %t/slurm-slurmdbd.pid %t/slurm-slurmdbd.ctr-id
-ExecStart=/usr/bin/podman run --add-host c1:127.0.30.1 \
-                              --add-host c2:127.0.30.2 \
-                              --add-host c3:127.0.30.3 \
-                              --add-host c4:127.0.30.4 \
-                              --add-host c5:127.0.30.5 \
-                              --add-host c6:127.0.30.6 \
-                              --add-host c7:127.0.30.7 \
-                              --add-host c8:127.0.30.8 \
-                              --add-host c9:127.0.30.9 \
-                              --add-host slurmctld:127.0.29.3 \
-                              --cgroups=no-conmon \
+ExecStart=/usr/bin/podman run --cgroups=no-conmon \
                               --cidfile %t/slurm-slurmdbd.ctr-id \
                               --conmon-pidfile %t/slurm-slurmdbd.pid \
                               --detach \
-                              --hostname slurmdbd \
                               --name slurmdbd \
                               --replace \
                               --volume=%S/slurm-container-cluster/adjusting_ports_for_norouter/slurmdbd:/etc/slurm/adjusting_ports_for_norouter:z \
@@ -44,7 +33,7 @@ ExecStart=/usr/bin/podman run --add-host c1:127.0.30.1 \
                               --volume=%S/slurm-container-cluster/etc_slurm:/etc/slurm:z \
                               --volume=%S/slurm-container-cluster/var_log_slurmdbd:/var/log/slurm:Z \
                               --volume=%S/slurm-container-cluster/var_run_mysqld:/var/run/mysqld:z \
-                              -e MYSQL_UNIX_PORT=/var/run/mysqld/mysqld.sock \
+                              --env MYSQL_UNIX_PORT=/var/run/mysqld/mysqld.sock \
                               localhost/slurm-with-norouter slurmdbd
 ExecStop=/usr/bin/podman stop --cidfile %t/slurm-slurmdbd.ctr-id \
                               --ignore \
