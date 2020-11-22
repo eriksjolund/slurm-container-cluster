@@ -1,19 +1,14 @@
-FROM centos:7
+FROM quay.io/podman/stable:v2.1.1
 
-LABEL org.opencontainers.image.source="https://github.com/giovtorres/slurm-docker-cluster" \
-      org.opencontainers.image.title="slurm-docker-cluster" \
-      org.opencontainers.image.description="Slurm Docker cluster on CentOS 7" \
-      org.label-schema.docker.cmd="docker-compose up -d" \
-      maintainer="Giovanni Torres"
+LABEL org.opencontainers.image.source="https://github.com/eriksjolund/slurm-container-cluster" \
+      org.opencontainers.image.title="slurm-container-cluster" \
+      org.opencontainers.image.description="Slurm container cluster with norouter on Fedora"
 
-ARG SLURM_TAG=slurm-19-05-1-2
-ARG GOSU_VERSION=1.11
+ARG SLURM_TAG=slurm-20-11-0-1
+ARG GOSU_VERSION=1.12
 
-RUN set -ex \
-    && yum makecache fast \
-    && yum -y update \
-    && yum -y install epel-release \
-    && yum -y install \
+RUN dnf -y update \
+    && dnf -y install \
        wget \
        bzip2 \
        perl \
@@ -24,22 +19,23 @@ RUN set -ex \
        make \
        munge \
        munge-devel \
-       python-devel \
-       python-pip \
-       python34 \
-       python34-devel \
-       python34-pip \
+       python3-pip \
        mariadb-server \
        mariadb-devel \
        psmisc \
        bash-completion \
        vim-enhanced \
-    && yum clean all \
-    && rm -rf /var/cache/yum
+       procps-ng \
+       net-tools \
+       hostname \
+    && dnf clean all \
+    && rm -rf /var/cache/yum \
+    && curl -o /usr/local/bin/norouter --fail -L https://github.com/norouter/norouter/releases/latest/download/norouter-$(uname -s)-$(uname -m) \
+    && chmod 755 /usr/local/bin/norouter
 
-RUN pip install Cython nose && pip3.4 install Cython nose
+RUN pip3 install Cython nose
 
-RUN set -ex \
+RUN set -x \
     && wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-amd64" \
     && wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-amd64.asc" \
     && export GNUPGHOME="$(mktemp -d)" \
@@ -62,8 +58,8 @@ RUN set -x \
     && install -D -m644 contribs/slurm_completion_help/slurm_completion.sh /etc/profile.d/slurm_completion.sh \
     && popd \
     && rm -rf slurm \
-    && groupadd -r --gid=995 slurm \
-    && useradd -r -g slurm --uid=995 slurm \
+    && groupadd -r slurm \
+    && useradd -r -g slurm slurm \
     && mkdir /etc/sysconfig/slurm \
         /var/spool/slurmd \
         /var/run/slurmd \
@@ -81,7 +77,9 @@ RUN set -x \
         /var/lib/slurmd/qos_usage \
         /var/lib/slurmd/fed_mgr_state \
     && chown -R slurm:slurm /var/*/slurm* \
-    && /sbin/create-munge-key
+    && /sbin/create-munge-key \
+    chown munge:munge /var/run/munge && \
+    sed -i 's/socket=\/var\/lib\/mysql\/mysql.sock/socket=\/var\/run\/mysqld\/mysqld.sock/g' /etc/my.cnf
 
 COPY slurm.conf /etc/slurm/slurm.conf
 COPY slurmdbd.conf /etc/slurm/slurmdbd.conf

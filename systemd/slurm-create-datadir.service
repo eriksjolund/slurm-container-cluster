@@ -19,12 +19,12 @@ ExecStart=/bin/mkdir -p %S/slurm-container-cluster/var_run_mysqld
 ExecStart=/bin/mkdir -p %S/slurm-container-cluster/var_log_slurmdbd
 ExecStart=/bin/mkdir -p %S/slurm-container-cluster/var_log_slurmctld
 ExecStart=podman unshare /bin/chmod 700 %S/slurm-container-cluster/etc_munge
-ExecStart=podman unshare /bin/chown 999:997 %S/slurm-container-cluster/etc_munge
+ExecStart=podman unshare /bin/chown 993:992 %S/slurm-container-cluster/etc_munge
 
 ExecStart=podman unshare /bin/chmod 700 %S/slurm-container-cluster/var_log_slurmdbd
 ExecStart=podman unshare /bin/chmod 700 %S/slurm-container-cluster/var_log_slurmctld
-ExecStart=podman unshare /bin/chown 995:995 %S/slurm-container-cluster/var_log_slurmdbd
-ExecStart=podman unshare /bin/chown 995:995 %S/slurm-container-cluster/var_log_slurmctld
+ExecStart=podman unshare /bin/chown 992:991 %S/slurm-container-cluster/var_log_slurmdbd
+ExecStart=podman unshare /bin/chown 992:991 %S/slurm-container-cluster/var_log_slurmctld
 
 KillMode=none
 

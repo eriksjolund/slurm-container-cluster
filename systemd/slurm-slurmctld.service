@@ -31,23 +31,18 @@ Restart=on-failure
 StateDirectory=slurm-container-cluster
 StateDirectoryMode=0700
 ExecStartPre=/bin/rm -f %t/slurm-slurmctld.pid %t/slurm-slurmctld.ctr-id
-ExecStart=/usr/bin/podman run --add-host c1:127.0.30.1 \
-                              --add-host c2:127.0.30.2 \
-                              --add-host c3:127.0.30.3 \
-                              --add-host c4:127.0.30.4 \
-                              --add-host c5:127.0.30.5 \
-                              --add-host c6:127.0.30.6 \
-                              --add-host c7:127.0.30.7 \
-                              --add-host c8:127.0.30.8 \
-                              --add-host c9:127.0.30.9 \
-                              --add-host slurmdbd:127.0.29.2 \
+
+ExecStart=/usr/bin/podman run \
                               --cgroups=no-conmon \
                               --cidfile %t/slurm-slurmctld.ctr-id \
                               --conmon-pidfile %t/slurm-slurmctld.pid \
                               --detach \
                               --hostname slurmctld \
                               --name slurmctld \
+                              --privileged \
                               --replace \
+                              --ulimit host \
+                              --volume /dev/fuse:/dev/fuse:rw \
                               --volume=%S/slurm-container-cluster/adjusting_ports_for_norouter/slurmctld:/etc/slurm/adjusting_ports_for_norouter:z \
                               --volume=%S/slurm-container-cluster/etc_munge:/etc/munge:z \
                               --volume=%S/slurm-container-cluster/etc_slurm:/etc/slurm:z \
