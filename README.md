@@ -319,9 +319,9 @@ Here is an example of how to to run a container with podman. The container _dock
 ```
 user@laptop:~$ podman exec -it slurmctld bash -c "cd /data/sshocker_shared && cat podman-example.sh"
 #!/bin/sh
-podman run --user 0 --cgroups disabled --runtime crun --volume /data:/data:rw --events-backend=file --rm docker.io/library/alpine cat /etc/os-release
+podman run --user 0 --cgroups disabled --runtime crun --volume /data:/data:rw --events-backend=file --rm docker.io/library/alpine:3.12.1 cat /etc/os-release
 
-user@laptop:~$ podman exec -it slurmctld bash -c "cd /data/sshocker_shared && sbatch ./podman-example"
+user@laptop:~$ podman exec -it slurmctld bash -c "cd /data/sshocker_shared && sbatch ./podman-example.sh"
 Submitted batch job 32
 ```
 
