@@ -30,6 +30,7 @@ ExecStart=/usr/bin/podman run --cgroups=no-conmon \
                               --conmon-pidfile %t/slurm-slurmd%i.pid \
                               --detach \
                               --name c%i \
+                              --hostname c%i \
                               --privileged=true \
                               --replace \
                               --security-opt label=disable \
