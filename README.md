@@ -69,30 +69,22 @@ podman image tag localhost/slurm-container-cluster localhost/slurm-with-norouter
 
 (the identifier _localhost/slurm-with-norouter_ is used in the systemd service files)
 
-4. 
+4. Create an empty directory
 
 ```
-bash prepare-installation-files.sh
-```
-
-A temporary directory will be created that is then filled with installation files.
-The path of the temporary directory is written to stdout in the end of the script.
-(e.g. installation_files_dir=_/tmp/tmp.WKve6PeZgi_)
-
-5. 
-
-Set the shell variable `installation_files_dir` to the directory path from the previous step,
-by copy-pasting the output and run it in the terminal
-
-```
-installation_files_dir=/tmp/tmp.WKve6PeZgi
+mkdir ~/installation_files
+installation_files_dir=~/installation_files
 ```
 
 (The variable is just used to simplify the instructions in this README.md)
 
+5.
+
+```
+bash prepare-installation-files.sh $installation_files_dir
+```
 
 6.
-
 
 Add extra container images to the installation files. These container images can be run by podman
 in your sbatch scripts.
@@ -141,7 +133,6 @@ On the computer that you would like to have mysqld, slurmdbd and slurmctld runni
 ```
 systemctl --user enable --now slurm-mysql.service slurm-slurmdbd.service slurm-slurmctld.service
 ```
-
 
 (Advanced tip: If your local computer is not running Linux, you might be able to use one of 
 the remote computers instead and only use the local computer for running
