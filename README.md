@@ -351,6 +351,54 @@ podman logs mysql
 (The container must still be running in order for the `podman logs` command to succeed).
 
 
+
+### Troubleshooting
+
+If you experience problems, try this
+
+1. Stop norouter (by pressing _Ctrl-c_)
+
+2. Restart all services
+
+```
+systemctl --user restart slurm-mysql slurm-slurmdbd slurm-slurmctld  slurm-create-datadir
+```
+
+```
+systemctl --user restart  slurm-computenode@1.service
+```
+
+```
+systemctl --user restart  slurm-computenode@2.service
+```
+
+(Note: the restart command should be run on the computer where the service was once enabled).
+
+3. Run _podman logs_
+
+For the different containers
+
+* mysql
+* slurmdbd
+* slurmctld
+* c1
+* c2
+
+run `podman logs containername`, for instance
+
+```
+$ podman logs c1
+---> Starting the MUNGE Authentication service (munged) ...
+-- Waiting for norouter to start. Sleeping 2 seconds ...
+-- Waiting for norouter to start. Sleeping 2 seconds ...
+-- Waiting for norouter to start. Sleeping 2 seconds ...
+-- Waiting for norouter to start. Sleeping 2 seconds ...
+```
+
+Except for mysql, the containers should be all waiting for norouter to start.
+
+4. Start norouter
+
 # Using _Fedora CoreOS_ to run compute node containers
 
 The Linux distribution [Fedora CoreOS](https://docs.fedoraproject.org/en-US/fedora-coreos/getting-started/) comes with both __podman__ and __sshfs__ pre-installed. If you have some extra computers that are not in use, you could boot them up with a Fedora CoreOS USB stick to get extra Slurm compute nodes.
