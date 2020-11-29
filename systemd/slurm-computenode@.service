@@ -39,6 +39,7 @@ ExecStart=/usr/bin/podman run --cgroups=no-conmon \
                               --volume=%S/slurm-container-cluster/computenode/%i/var_log_slurm:/var/log/slurm:Z \
                               --volume=%S/slurm-container-cluster/etc_munge:/etc/munge:z \
                               --volume=%S/slurm-container-cluster/etc_slurm:/etc/slurm:z \
+                              --volume=%S/slurm-container-cluster/extra-containerimages:/var/lib/shared:ro \
                               --volume=%S/slurm-container-cluster/slurm_jobdir:/data:slave \
                               localhost/slurm-with-norouter slurmd
 ExecStop=/usr/bin/podman stop --cidfile %t/slurm-slurmd%i.ctr-id \

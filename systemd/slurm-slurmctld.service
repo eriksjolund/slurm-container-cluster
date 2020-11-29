@@ -46,6 +46,7 @@ ExecStart=/usr/bin/podman run \
                               --volume=%S/slurm-container-cluster/adjusting_ports_for_norouter/slurmctld:/etc/slurm/adjusting_ports_for_norouter:z \
                               --volume=%S/slurm-container-cluster/etc_munge:/etc/munge:z \
                               --volume=%S/slurm-container-cluster/etc_slurm:/etc/slurm:z \
+                              --volume=%S/slurm-container-cluster/extra-containerimages:/var/lib/shared:ro \
                               --volume=%S/slurm-container-cluster/slurm_jobdir:/data:z \
                               --volume=%S/slurm-container-cluster/var_log_slurmctld:/var/log/slurm:Z \
                               localhost/slurm-with-norouter slurmctld

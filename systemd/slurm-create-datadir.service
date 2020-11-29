@@ -13,6 +13,7 @@ StateDirectory=slurm-container-cluster
 StateDirectoryMode=0700
 ExecStart=/bin/mkdir -p %S/slurm-container-cluster/etc_munge
 ExecStart=/bin/mkdir -p %S/slurm-container-cluster/etc_slurm
+ExecStart=/bin/mkdir -p %S/slurm-container-cluster/extra-containerimages
 ExecStart=/bin/mkdir -p %S/slurm-container-cluster/slurm_jobdir
 ExecStart=/bin/mkdir -p %S/slurm-container-cluster/var_lib_mysql
 ExecStart=/bin/mkdir -p %S/slurm-container-cluster/var_run_mysqld
