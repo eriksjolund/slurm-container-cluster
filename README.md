@@ -352,7 +352,7 @@ podman logs mysql
 
 
 
-### Troubleshooting
+## Troubleshooting
 
 If you experience problems, try this
 
