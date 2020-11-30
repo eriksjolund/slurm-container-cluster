@@ -51,7 +51,8 @@ process.executor = 'slurm'
 podman {
     enabled = true
     temp = 'auto'
-   runOptions = '--ulimit host --security-opt label=disable --cgroups disabled --runtime crun --volume /data:/data:rw --events-backend=file '
+   runOptions = '--ulimit host --security-opt label=disable --cgroups disabled --runtime crun --volume /data:/data:rw --events-backend=file'
+   engineOptions = '--storage-driver vfs'
 }
 ```
 
