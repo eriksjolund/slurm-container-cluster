@@ -15,7 +15,7 @@ StateDirectory=install-sshocker
 StateDirectoryMode=0700
 ExecStart=/usr/bin/curl --create-dirs -o %S/slurm-container-cluster/install-sshocker/sshocker --fail -L https://github.com/AkihiroSuda/sshocker/releases/latest/download/sshocker-Linux-x86_64
 ExecStart=chmod 755 %S/slurm-container-cluster/install-sshocker/sshocker
-KillMode=none
+KillMode=control-group
 
 [Install]
 WantedBy=multi-user.target

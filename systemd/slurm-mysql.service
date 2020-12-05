@@ -38,7 +38,7 @@ ExecStopPost=/usr/bin/podman rm --cidfile %t/slurm-mysql.ctr-id \
                                 --force \
 				--ignore
 PIDFile=%t/slurm-mysql.pid
-KillMode=none
+KillMode=control-group
 Type=forking
 
 [Install]

@@ -42,7 +42,7 @@ ExecStopPost=/usr/bin/podman rm --cidfile %t/slurm-slurmdbd.ctr-id \
                              --force \
                              --ignore
 PIDFile=%t/slurm-slurmdbd.pid
-KillMode=none
+KillMode=control-group
 Type=forking
 
 [Install]

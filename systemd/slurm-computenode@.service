@@ -18,11 +18,13 @@ Restart=no
 StateDirectory=slurm-container-cluster
 StateDirectoryMode=0700
 ExecStartPre=rm -f %t/slurm-slurmd%i.pid %t/slurm-slurmd%i.ctr-id
+ExecStartPre=mkdir -p %S/slurm-container-cluster/computenode/%i/var_lib_containers
 ExecStartPre=mkdir -p %S/slurm-container-cluster/computenode/%i/var_log_slurm
 ExecStartPre=podman unshare chmod 700 %S/slurm-container-cluster/computenode/%i/var_log_slurm
 ExecStartPre=podman unshare chown 992:991 %S/slurm-container-cluster/computenode/%i/var_log_slurm
 ExecStartPre=podman unshare rm -rf %S/slurm-container-cluster/computenode/%i/var_log_munge
 ExecStartPre=podman unshare mkdir -p %S/slurm-container-cluster/computenode/%i/var_log_munge
+ExecStartPre=/usr/bin/podman unshare chmod 755 %S/slurm-container-cluster/computenode/%i/var_lib_containers
 ExecStartPre=/usr/bin/podman unshare chmod 755 %S/slurm-container-cluster/computenode/%i/var_log_munge
 ExecStartPre=/usr/bin/podman unshare chown 993:992 %S/slurm-container-cluster/computenode/%i/var_log_munge
 ExecStart=/usr/bin/podman run --cgroups=no-conmon \
@@ -35,6 +37,7 @@ ExecStart=/usr/bin/podman run --cgroups=no-conmon \
                               --replace \
                               --security-opt label=disable \
                               --volume=%S/slurm-container-cluster/adjusting_ports_for_norouter/slurmd:/etc/slurm/adjusting_ports_for_norouter:z \
+                              --volume=%S/slurm-container-cluster/computenode/%i/var_lib_containers:/var/lib/containers:Z \
                               --volume=%S/slurm-container-cluster/computenode/%i/var_log_munge:/var/log/munge:z \
                               --volume=%S/slurm-container-cluster/computenode/%i/var_log_slurm:/var/log/slurm:Z \
                               --volume=%S/slurm-container-cluster/etc_munge:/etc/munge:z \
@@ -49,7 +52,7 @@ ExecStopPost=/usr/bin/podman rm --cidfile %t/slurm-slurmd%i.ctr-id \
                                 --force \
                                 --ignore
 PIDFile=%t/slurm-slurmd%i.pid
-KillMode=none
+KillMode=control-group
 Type=forking
 
 [Install]

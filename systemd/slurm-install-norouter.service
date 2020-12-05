@@ -15,7 +15,7 @@ StateDirectory=install-norouter
 StateDirectoryMode=0700
 ExecStart=/usr/bin/curl --create-dirs -o %S/slurm-container-cluster/install-norouter/norouter --fail -L https://github.com/norouter/norouter/releases/latest/download/norouter-Linux-x86_64
 ExecStart=chmod 755 %S/slurm-container-cluster/install-norouter/norouter
-KillMode=none
+KillMode=control-group
 
 [Install]
 WantedBy=multi-user.target

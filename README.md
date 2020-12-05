@@ -1,3 +1,7 @@
+__Status__: It seems to work, but a `systemctl --user restart` might be needed (see [Troubleshooting](#troubleshooting)) at startup time.
+Running Nextflow on top of _slurm-container-cluster_ also seems to work. (See the [Nextflow pipeline example](examples/nextflow/README.md) where _slurm-container-cluster_ let a laptop and a desktop
+form a small Slurm cluster).
+
 # slurm-container-cluster
 
 Run a Slurm cluster in containers as a non-root user on multiple hosts, by making use of
@@ -310,7 +314,7 @@ Here is an example of how to to run a container with podman. The container _dock
 ```
 user@laptop:~$ podman exec -it slurmctld bash -c "cd /data/sshocker_shared && cat podman-example.sh"
 #!/bin/sh
-podman --storage-driver vfs run --user 0 --cgroups disabled --runtime crun --volume /data:/data:rw --events-backend=file --rm docker.io/library/alpine:3.12.1 cat /etc/os-release
+podman run --user 0 --cgroups disabled --runtime crun --volume /data:/data:rw --events-backend=file --rm docker.io/library/alpine:3.12.1 cat /etc/os-release
 
 user@laptop:~$ podman exec -it slurmctld bash -c "cd /data/sshocker_shared && sbatch ./podman-example.sh"
 Submitted batch job 32
@@ -353,6 +357,38 @@ podman logs mysql
 
 
 ## Troubleshooting
+
+### Norouter warnings
+
+At startup time there might be a few warnings for just a short while:
+
+```
+me@laptop:~$ ~/.config/slurm-container-cluster/install-norouter/norouter ~/norouter.yaml
+laptop: INFO[0000] Ready: 127.0.29.100
+laptop: INFO[0000] Ready: 127.0.29.3
+laptop: INFO[0000] Ready: 127.0.30.1
+laptop: INFO[0000] Ready: 127.0.29.2
+laptop: INFO[0000] Ready: 127.0.30.2
+laptop: WARN[0002] stderr[slurmctld-norouter(127.0.29.3)]: slurmctld: time="2020-12-05T09:48:29Z" level=error msg="failed to dial to \"127.0.0.1:7817\" (\"tcp\")" error="dial tcp 127.0.0.1:7817: connect: connection refused"
+laptop: WARN[0002] stderr[slurmctld-norouter(127.0.29.3)]: slurmctld: time="2020-12-05T09:48:29Z" level=error msg="failed to dial to \"127.0.0.1:7817\" (\"tcp\")" error="dial tcp 127.0.0.1:7817: connect: connection refused"
+laptop: WARN[0003] stderr[slurmctld-norouter(127.0.29.3)]: slurmctld: time="2020-12-05T09:48:30Z" level=error msg="failed to dial to \"127.0.0.1:7817\" (\"tcp\")" error="dial tcp 127.0.0.1:7817: connect: connection refused"
+```
+
+_slurm-container-cluster_ seems to work though, so they can probably be ignored.
+
+But the warning  _laptop: WARN[0004] error while handling L3 packet                error="write |1: broken pipe"_ seems to be more severe.
+
+```
+laptop: WARN[0003] stderr[slurmdbd(127.0.29.2)]: d6ade94bd628: time="2020-12-05T08:50:33Z" level=error msg="failed to dial to \"127.0.0.1:7819\" (\"tcp\")" error="dial tcp 127.0.0.1:7819: connect: connection refused"
+laptop: WARN[0003] stderr[slurmdbd(127.0.29.2)]: d6ade94bd628: time="2020-12-05T08:50:33Z" level=error msg="failed to dial to \"127.0.0.1:7819\" (\"tcp\")" error="dial tcp 127.0.0.1:7819: connect: connection refused"
+laptop: WARN[0004] error while handling L3 packet                error="write |1: broken pipe"
+laptop: WARN[0004] error while handling L3 packet                error="write |1: broken pipe"
+laptop: WARN[0004] error while handling L3 packet                error="write |1: broken pipe"
+```
+
+For those warnings, it seems that a restart of all the _slurm-*_ services is needed.
+
+### Restarting the services
 
 If you experience problems, try this
 

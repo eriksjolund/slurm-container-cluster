@@ -27,7 +27,7 @@ ExecStart=podman unshare /bin/chmod 700 %S/slurm-container-cluster/var_log_slurm
 ExecStart=podman unshare /bin/chown 992:991 %S/slurm-container-cluster/var_log_slurmdbd
 ExecStart=podman unshare /bin/chown 992:991 %S/slurm-container-cluster/var_log_slurmctld
 
-KillMode=none
+KillMode=control-group
 
 [Install]
 WantedBy=multi-user.target
