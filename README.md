@@ -1,5 +1,5 @@
-__Status__: It seems to work, but a `systemctl --user restart` might be needed (see [Troubleshooting](#troubleshooting)) at startup time.
-Running Nextflow on top of _slurm-container-cluster_ also seems to work. (See the [Nextflow pipeline example](examples/nextflow/README.md) where _slurm-container-cluster_ runs a two-node Slurm cluster on a laptop and a desktop.
+__Status__: It seems to work, but a `systemctl --user restart` might be needed at startup time (see [Troubleshooting](#troubleshooting)).
+Running [Nextflow](https://www.nextflow.io/) on top of _slurm-container-cluster_ also seems to work. (See the [Nextflow pipeline example](examples/nextflow/README.md) where _slurm-container-cluster_ runs a two-node Slurm cluster on a laptop and a desktop.
 
 # slurm-container-cluster
 
