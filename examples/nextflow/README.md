@@ -1,6 +1,6 @@
-# nextflow blast-example pipeline with slurm-container-cluster
+# Nextflow blast-example pipeline with slurm-container-cluster
 
-To run the [nextflow BLAST pipeline example](https://www.nextflow.io/example3.html)
+To run the [Nextflow blast-example pipeline](https://www.nextflow.io/example3.html)
 
 1. Follow the installation instructions 1,2,3 in main [README.md](../../README.md)
 
@@ -60,7 +60,7 @@ nextflow run blast-example -qs 12 -with-podman --chunkSize 3
 
 ### Result of the test
 
-The jobs seems to have run on both Slurm compute nodes (_c1_ and _c2_).
+It worked!
 
 ```
 [root@slurmctld ~]# nextflow run blast-example -qs 12 -with-podman --chunkSize 3
@@ -75,6 +75,7 @@ matching sequences:
 ```
 (Output omitted for brevity)
 
+Both of the Slurm compute nodes (_c1_ and _c2_) have been used for running the compute jobs:
 
 Run `podman logs c1` on the laptop
 
