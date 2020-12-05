@@ -1,9 +1,6 @@
-# nextflow BLAST pipeline with slurm-container-cluster
-
-Status: This is work in progress. 
+# nextflow blast-example pipeline with slurm-container-cluster
 
 To run the [nextflow BLAST pipeline example](https://www.nextflow.io/example3.html)
-
 
 1. Follow the installation instructions 1,2,3 in main [README.md](../../README.md)
 
