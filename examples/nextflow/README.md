@@ -2,7 +2,7 @@
 
 To run the [Nextflow blast-example pipeline](https://www.nextflow.io/example3.html)
 
-1. Follow the installation instructions 1,2,3 in main [README.md](../../README.md)
+1. Follow the installation instruction steps 1, 2 and 3 in the main [README.md](../../README.md)
 
 2. Build the container image that we will be used for running Nextflow.
 Tag it with the name _localhost/slurm-with-norouter_ so that it will be the container image used by the systemd services.
@@ -12,8 +12,8 @@ podman build -t nextflow-slurm examples/nextflow
 podman image tag nextflow-slurm localhost/slurm-with-norouter
 ```
 
-3. Follow the rest of installation instructions in main [README.md](../../README.md), 
-but at point number 6 run 
+3. Follow the rest of the installation instructions in the main [README.md](../../README.md),
+but at step number 6 run
 
 ```
 podman pull docker.io/nextflow/examples
@@ -26,7 +26,7 @@ bash add-extra-containerimage.sh $installation_files_dir docker.io/nextflow/exam
 podman exec -ti slurmctld /bin/bash
 ```
 
-5. Create a home directory in a directory that is shared between _slurmctld_ container and the slurm compute node containers.
+5. Create a home directory in a directory that is shared between the _slurmctld_ container and the slurm compute node containers.
 
 ```
 mkdir /data/sshocker_shared/nextflowhome
@@ -75,7 +75,7 @@ matching sequences:
 ```
 (Output omitted for brevity)
 
-Both of the Slurm compute nodes (_c1_ and _c2_) have been used for running the compute jobs:
+Both of the Slurm compute nodes (_c1_ and _c2_) have been used for running the compute jobs.
 
 Run `podman logs c1` on the laptop
 
@@ -175,8 +175,7 @@ Dec-05 09:59:15.946 [main] DEBUG nextflow.script.ScriptRunner - > Execution comp
 [root@slurmctld ~]#
 ```
 
-Note, the _~/.nextflow.log_ above is the same file as _~/.config/slurm-container-cluster/slurm_jobdir/sshocker_shared/nextflowhome/.nextflow.log_
-on the laptop.
+Note, the _~/.nextflow.log_ above is the same file as _~/.config/slurm-container-cluster/slurm_jobdir/sshocker_shared/nextflowhome/.nextflow.log_ on the laptop.
 
 ```
 me@laptop$ cat ~/.config/slurm-container-cluster/slurm_jobdir/sshocker_shared/nextflowhome/.nextflow.log | head -2
