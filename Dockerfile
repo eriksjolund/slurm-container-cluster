@@ -1,10 +1,11 @@
-FROM quay.io/podman/stable:v2.1.1
-
+ARG PODMAN_VERSION=v2.1.1
+FROM quay.io/podman/stable:${PODMAN_VERSION}
+ARG PODMAN_VERSION
 LABEL org.opencontainers.image.source="https://github.com/eriksjolund/slurm-container-cluster" \
       org.opencontainers.image.title="slurm-container-cluster" \
       org.opencontainers.image.description="Slurm container cluster with norouter on Fedora"
 
-ARG SLURM_TAG=slurm-20-11-0-1
+ARG SLURM_TAG=slurm-20-11-2-1
 ARG GOSU_VERSION=1.12
 
 RUN dnf -y update \
