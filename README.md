@@ -76,8 +76,9 @@ or pull the container images:
 ```
 podman pull docker.io/eriksjolund/slurm-container-cluster:podman-v2.1.1-slurm-slurm-20-11-2-1-norouter-v0.6.1
 podman pull docker.io/eriksjolund/mysql-with-norouter:mysql-5.7-norouter-v0.6.1
-podman image tag docker.io/eriksjolund/slurm-container-cluster:podman-v2.1.1-slurm-slurm-20-11-2-1-norouter-v0.6.1 localhost/slurm-with-norouter
+podman image tag docker.io/eriksjolund/slurm-container-cluster:podman-v2.1.1-slurm-slurm-20-11-2-1-norouter-v0.6.1 localhost/slurm-container-cluster
 podman image tag docker.io/eriksjolund/mysql-with-norouter:mysql-5.7-norouter-v0.6.1 localhost/mysql-with-norouter
+podman image tag localhost/slurm-container-cluster localhost/slurm-with-norouter
 ```
 
 (the identifiers _localhost/slurm-with-norouter_ and _localhost/mysql-with-norouter_ are used in the systemd service files)
