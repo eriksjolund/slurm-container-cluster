@@ -62,15 +62,25 @@ $ git clone URL
 $ cd slurm-container-cluster
 ```
 
-3. Build the container images
+3. Build or pull the container images
+
+Build the container images:
 
 ```
 podman build -t slurm-container-cluster .
 podman build -t mysql-with-norouter container/mysql-with-norouter/
 podman image tag localhost/slurm-container-cluster localhost/slurm-with-norouter
 ```
+or pull the container images:
 
-(the identifier _localhost/slurm-with-norouter_ is used in the systemd service files)
+```
+podman pull docker.io/eriksjolund/slurm-container-cluster:podman-v2.1.1-slurm-slurm-20-11-2-1-norouter-v0.6.1
+podman pull docker.io/eriksjolund/mysql-with-norouter:mysql-5.7-norouter-v0.6.1
+podman image tag docker.io/eriksjolund/slurm-container-cluster:podman-v2.1.1-slurm-slurm-20-11-2-1-norouter-v0.6.1 localhost/slurm-with-norouter
+podman image tag docker.io/eriksjolund/mysql-with-norouter:mysql-5.7-norouter-v0.6.1 localhost/mysql-with-norouter
+```
+
+(the identifiers _localhost/slurm-with-norouter_ and _localhost/mysql-with-norouter_ are used in the systemd service files)
 
 4. Create an empty directory
 
