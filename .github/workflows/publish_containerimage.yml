@@ -10,6 +10,7 @@ jobs:
       matrix:
         podman-version: [v2.1.1]
         slurm-version: [slurm-20-11-2-1]
+        norouter-version: [v0.6.1]
     steps:
       -
         name: Set up QEMU
@@ -29,10 +30,11 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: eriksjolund/slurm-container-cluster:podman-${{ matrix.podman-version }}-${{ matrix.slurm-version }}
+          tags: eriksjolund/slurm-container-cluster:podman-${{ matrix.podman-version }}-slurm-${{ matrix.slurm-version }}-norouter-${{ matrix.norouter-version }}
           build-args: |
             PODMAN_VERSION=${{ matrix.podman-version }}
             SLURM_TAG=${{ matrix.slurm-version }}
+            NOROUTER_VERSION=${{ matrix.norouter-version }}
       -
         name: Image digest slurm-container-cluster
         run: echo ${{ steps.docker_build_slurm-container-cluster.outputs.digest }}

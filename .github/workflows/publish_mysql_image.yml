@@ -9,6 +9,7 @@ jobs:
     strategy:
       matrix:
         mysql-version: [5.7]
+        norouter-version: [v0.6.1]
     steps:
       -
         name: Checkout
@@ -34,9 +35,10 @@ jobs:
           file: ./container/mysql-with-norouter/Dockerfile
           platforms: linux/amd64
           push: true
-          tags: eriksjolund/mysql-with-norouter:mysql-${{ matrix.mysql-version }}
+          tags: eriksjolund/mysql-with-norouter:mysql-${{ matrix.mysql-version }}-norouter-${{ matrix.norouter-version }}
           build-args: |
             MYSQL_VERSION=${{ matrix.mysql-version }}
+            NOROUTER_VERSION=${{ matrix.norouter-version }}
       -
         name: Image digest mysql-with-norouter
         run: echo ${{ steps.docker_build_mysql-with-norouter.outputs.digest }}
