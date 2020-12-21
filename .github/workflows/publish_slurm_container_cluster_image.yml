@@ -2,7 +2,7 @@ name: Build and push slurm-container-cluster images
 on:
   push:
     tags:
-      - publish-slurm-image-*
+      - publish-slurm-container-cluster-image-*
 jobs:
   main:
     runs-on: ubuntu-20.04
