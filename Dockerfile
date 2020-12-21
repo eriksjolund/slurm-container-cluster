@@ -5,6 +5,7 @@ LABEL org.opencontainers.image.source="https://github.com/eriksjolund/slurm-cont
       org.opencontainers.image.title="slurm-container-cluster" \
       org.opencontainers.image.description="Slurm container cluster with norouter on Fedora"
 
+ARG NOROUTER_VERSION=v0.6.1
 ARG SLURM_TAG=slurm-20-11-2-1
 ARG GOSU_VERSION=1.12
 
@@ -31,7 +32,7 @@ RUN dnf -y update \
        hostname \
     && dnf clean all \
     && rm -rf /var/cache/yum \
-    && curl -fsSL https://github.com/norouter/norouter/releases/latest/download/norouter-$(uname -s)-$(uname -m).tgz | tar xzvC /usr/local/bin
+    && curl -fsSL https://github.com/norouter/norouter/releases/download/${NOROUTER_VERSION}/norouter-$(uname -s)-$(uname -m).tgz | tar xzvC /usr/local/bin
 
 RUN pip3 install Cython nose
 
